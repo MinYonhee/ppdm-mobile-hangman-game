@@ -7,12 +7,12 @@ import Hangman from "../components/Hangman";
 import { styles } from "../assets/styles/styles";
 
 const palavras = [
-  "CASA", "CARRO", "MESA", "CADEIRA", "PORTA",
-  "JANELA", "GATO", "CACHORRO", "PESSOA", "AMIGO",
-  "FAMÍLIA", "ESCOLA", "TRABALHO", "COMIDA", "FRUTA",
-  "ÁGUA", "CAFÉ", "LIVRO", "CANETA", "CELULAR",
-  "ROUPA", "BONE", "TREM", "ÔNIBUS", "PRAIA",
-  "MÚSICA", "FILME", "CHUVA", "SOL", "NOITE"
+  "SOL", "CHUVA", "ESCREVER", "CORRER", "MUSICA",
+  "AMIGO", "FESTA", "ESCOLA", "TRABALHO", "CELULAR",
+  "TREM", "ÔNIBUS", "PRAIA", "CIDADE", "VIAGEM",
+  "CINEMA", "LIVRO", "CANETA", "BICICLETA", "JARDIM",
+  "BOLSA", "CASA", "ROUPA", "JOGO", "COMIDA",
+  "FAMILIA", "ANIVERSARIO", "FOTOGRAFIA", "TARDE", "NOITE"
 ];
 
 export default function Index() {
