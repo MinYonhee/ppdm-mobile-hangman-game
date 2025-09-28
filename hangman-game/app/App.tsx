@@ -1,62 +1,86 @@
-import React, { useState } from 'react';
-import { View, Text, Button } from 'react-native';
-import Hangman from '../components/Hangman';
-import Keyboard from '../components/Keyboard';
-import Tries from '../components/Tries';
-import Result from '../components/Result';
-import { styles } from '../assets/styles/styles';
+import React, { useState, useEffect } from "react";
+import { View, Text, TouchableOpacity} from "react-native";
+import Word from "../components/Word";
+import Keyboard from "../components/Keyboard";
+import Tries from "../components/Tries";
+import Hangman from "../components/Hangman";
+import { styles } from "../assets/styles/styles";
 
-const palavras: string[] = [
-  'REACT', 'JAVASCRIPT', 'EXPO', 'MOBILE', 'NODE', 
-  'COMPONENTE', 'ESTADO', 'PROPS', 'HOOKS', 'FUNCAO',
-  'ANDROID', 'IOS', 'NAVEGACAO', 'ESTILO', 'INPUT',
-  'BOTAO', 'TEXTO', 'TELA', 'APLICATIVO', 'VARIAVEL',
-  'CONSTANTE', 'ARRAY', 'OBJETO', 'STRING', 'NUMBER',
-  'BOOLEAN', 'FUNCAO', 'PARAMETRO', 'RETURN', 'IMPORT'
+const palavras = [
+  "CASA", "CARRO", "MESA", "CADEIRA", "PORTA",
+  "JANELA", "GATO", "CACHORRO", "PESSOA", "AMIGO",
+  "FAMÍLIA", "ESCOLA", "TRABALHO", "COMIDA", "FRUTA",
+  "ÁGUA", "CAFÉ", "LIVRO", "CANETA", "CELULAR",
+  "ROUPA", "BONE", "TREM", "ÔNIBUS", "PRAIA",
+  "MÚSICA", "FILME", "CHUVA", "SOL", "NOITE"
 ];
 
-export default function App() {
-  const [palavra, setPalavra] = useState<string>(palavras[Math.floor(Math.random() * palavras.length)]);
-  const [letrasDescobertas, setLetrasDescobertas] = useState<string[]>([]);
-  const [tentativasRestantes, setTentativasRestantes] = useState<number>(6);
+export default function Index() {
+  const [palavra, setPalavra] = useState("");
   const [letrasUsadas, setLetrasUsadas] = useState<string[]>([]);
-  const [resultado, setResultado] = useState<string>('');
+  const [tentativasRestantes, setTentativasRestantes] = useState(6);
+  const [mensagem, setMensagem] = useState("");
 
-  const reiniciarJogo = () => {
-    const novaPalavra = palavras[Math.floor(Math.random() * palavras.length)];
-    setPalavra(novaPalavra);
-    setLetrasDescobertas([]);
-    setTentativasRestantes(6);
+  useEffect(() => {
+    iniciarJogo();
+  }, []);
+
+  function iniciarJogo() {
+    const palavraAleatoria =
+      palavras[Math.floor(Math.random() * palavras.length)];
+    setPalavra(palavraAleatoria);
     setLetrasUsadas([]);
-    setResultado('');
-  };
+    setTentativasRestantes(6);
+    setMensagem("");
+  }
 
-  const letraClicada = (letra: string) => {
-    if (letrasUsadas.includes(letra)) return;
+  function verificarLetra(letra: string) {
+    if (letrasUsadas.includes(letra) || mensagem) return;
 
-    setLetrasUsadas([...letrasUsadas, letra]);
+    setLetrasUsadas((prev) => [...prev, letra]);
 
-    if (palavra.includes(letra)) {
-      const novasDescobertas = [...letrasDescobertas, letra];
-      setLetrasDescobertas(novasDescobertas);
-
-      const todasLetras = palavra.split('').every(l => novasDescobertas.includes(l));
-      if (todasLetras) setResultado('Vitória');
-    } else {
-      const novasTentativas = tentativasRestantes - 1;
-      setTentativasRestantes(novasTentativas);
-      if (novasTentativas === 0) setResultado('Derrota');
+    if (!palavra.includes(letra)) {
+      setTentativasRestantes((prev) => prev - 1);
     }
-  };
+  }
+
+  useEffect(() => {
+    if (!palavra) return;
+
+    const ganhou = palavra.split("").every((l) => letrasUsadas.includes(l));
+    if (ganhou) {
+      setMensagem("Parabéns, você venceu!");
+    } else if (tentativasRestantes === 0) {
+      setMensagem(`VOCÊ PERDEU!\nA palavra era: ${palavra}`);
+    }
+  }, [letrasUsadas, tentativasRestantes]);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Jogo da Forca</Text>
-      <Hangman palavra={palavra} letrasDescobertas={letrasDescobertas} />
-      <Tries tentativasRestantes={tentativasRestantes} letrasUsadas={letrasUsadas} />
-      <Keyboard letraClicada={letraClicada} />
-      <Result resultado={resultado} palavra={palavra} />
-      <Button title="Reiniciar Jogo" onPress={reiniciarJogo} />
+      <Text style={styles.titulo}>Jogo da Forca</Text>
+
+      <Hangman erros={6 - tentativasRestantes} />
+
+      <Word palavra={palavra} letrasUsadas={letrasUsadas} />
+
+      <Tries
+        tentativasRestantes={tentativasRestantes}
+        letrasUsadas={letrasUsadas}
+        palavra={palavra}
+      />
+
+      {mensagem ? (
+        <View style={styles.resultadoContainer}>
+          <Text style={styles.resultadoTexto}>{mensagem}</Text>
+        </View>
+      ) : (
+        <Keyboard onPress={verificarLetra} letrasUsadas={letrasUsadas} />
+      )}
+
+      <TouchableOpacity style={styles.botaoReiniciar} onPress={iniciarJogo}>
+        <Text style={styles.botaoTexto}>REINICIAR</Text>
+      </TouchableOpacity>
+
     </View>
   );
 }

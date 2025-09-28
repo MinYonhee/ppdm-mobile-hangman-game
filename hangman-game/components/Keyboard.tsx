@@ -1,19 +1,30 @@
-import React from 'react';
-import { View, Button } from 'react-native';
-import { styles } from '../assets/styles/styles';
+import React from "react";
+import { View, Text, TouchableOpacity } from "react-native";
+import { styles } from "../assets/styles/styles";
 
-interface KeyboardProps {
-  letraClicada: (letra: string) => void;
+interface TecladoProps {
+  onPress: (letra: string) => void;
+  letrasUsadas: string[];
 }
 
-const letras = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+const alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
-export default function Keyboard({ letraClicada }: KeyboardProps) {
+export default function Teclado({ onPress, letrasUsadas }: TecladoProps) {
   return (
-    <View style={styles.keyboardContainer}>
-      {letras.map((letra) => (
-        <Button key={letra} title={letra} onPress={() => letraClicada(letra)} />
-      ))}
+    <View style={styles.teclado}>
+      {alfabeto.map((letra) => {
+        const usada = letrasUsadas.includes(letra);
+        return (
+          <TouchableOpacity
+            key={letra}
+            style={[styles.tecla, usada && styles.teclaUsada]}
+            onPress={() => onPress(letra)}
+            disabled={usada}
+          >
+            <Text style={styles.teclaTexto}>{letra}</Text>
+          </TouchableOpacity>
+        );
+      })}
     </View>
   );
 }

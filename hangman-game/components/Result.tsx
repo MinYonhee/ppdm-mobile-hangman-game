@@ -12,7 +12,7 @@ export default function Resultado({ resultado, palavra }: ResultadoProps) {
 
   return (
     <View style={styles.resultadoContainer}>
-      <Text style={styles.resultadoText}>
+      <Text style={styles.resultadoTexto}>
         {resultado === 'Vitória' ? 'Parabéns! Você ganhou!' : `Você perdeu! Palavra: ${palavra}`}
       </Text>
     </View>
